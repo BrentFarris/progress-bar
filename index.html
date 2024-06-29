@@ -91,7 +91,7 @@
         val.value = parseFloat(getURLParam("val") ?? localStorage.getItem("val") ?? "25");
         const p = percent();
         bar.style.width = p + "%";
-        pct.textContent = bar.style.width;
+        pct.textContent = p.toFixed(2) + "%";
     </script>
   </body>
 </html>

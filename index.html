@@ -1,12 +1,12 @@
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Progress Bar</title>
-		<meta name="description" content="Online progress bar">
-		<meta name="robots" content="index, follow">
-		<meta property="og:title" content="Progress Bar" />
-		<meta property="og:description" content="Online progress bar" />
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Progress Bar</title>
+    <meta name="description" content="Online progress bar">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Progress Bar" />
+    <meta property="og:description" content="Online progress bar" />
     <style>
       * { position: relative; }
       .inputs {
@@ -76,10 +76,19 @@
           localStorage.setItem("min", min.value);
           localStorage.setItem("max", max.value);
           localStorage.setItem("val", val.value);
+          window.history.pushState("", "", `?min=${min.value}&max=${max.value}&val=${val.value}`);
         }
-        min.value = parseFloat(localStorage.getItem("min") ?? "0");
-        max.value = parseFloat(localStorage.getItem("max") ?? "100");
-        val.value = parseFloat(localStorage.getItem("val") ?? "25");
+        function getURLParam(name) {
+          name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+          let regex = new RegExp("[\\?&]" + name + "=([^&#]*)"), results = regex.exec(location.search);
+          if (results !== null) {
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+          }
+          return null;
+        }
+        min.value = parseFloat(getURLParam("min") ?? localStorage.getItem("min") ?? "0");
+        max.value = parseFloat(getURLParam("max") ?? localStorage.getItem("max") ?? "100");
+        val.value = parseFloat(getURLParam("val") ?? localStorage.getItem("val") ?? "25");
         const p = percent();
         bar.style.width = p + "%";
         pct.textContent = bar.style.width;

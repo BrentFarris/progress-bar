@@ -54,7 +54,7 @@
       <p>Maximum</p>
       <input id="max" type="number" placeholder="Max..." value="100" onchange="set(event)" />
       <p>Value</p>
-      <input id="value" type="number" placeholder="Value..." value="25" onchange="set(event)" />
+      <input id="value" type="text" placeholder="Value..." value="25" onchange="set(event)" />
     </div>
     <div class="bar"><div id="fg"></div><div class="pct">0%</div></div>
     <script type="text/javascript">
@@ -63,6 +63,16 @@
         const val = document.getElementById("value");
         const bar = document.getElementById("fg");
         const pct = document.getElementsByClassName("pct")[0];
+        function cleanValue() {
+          if (!val.value) {
+            val.value = "0";
+          }
+          let v = eval(val.value);
+            if (!v) {
+            v = parseFloat(val.value);
+          }
+          val.value = v;
+        }
         function percent() {
           const l = parseFloat(min.value);
           const h = parseFloat(max.value);
@@ -70,12 +80,13 @@
           return 100 * (v - l) / (h - l);
         }
         function set(evt) {
+          cleanValue();
           const p = percent();
           bar.style.width = p + "%";
-          pct.textContent = percent() + "%";
-          localStorage.setItem("min", min.value);
-          localStorage.setItem("max", max.value);
-          localStorage.setItem("val", val.value);
+          pct.textContent = percent().toFixed(2) + "%";
+          localStorage.setItem("min", min.value ?? "0");
+          localStorage.setItem("max", max.value ?? "100");
+          localStorage.setItem("val", val.value ?? "0");
           window.history.pushState("", "", `?min=${min.value}&max=${max.value}&val=${val.value}`);
         }
         function getURLParam(name) {
@@ -86,9 +97,10 @@
           }
           return null;
         }
-        min.value = parseFloat(getURLParam("min") ?? localStorage.getItem("min") ?? "0");
-        max.value = parseFloat(getURLParam("max") ?? localStorage.getItem("max") ?? "100");
-        val.value = parseFloat(getURLParam("val") ?? localStorage.getItem("val") ?? "25");
+        min.value = parseFloat(getURLParam("min") ?? localStorage.getItem("min"));
+        max.value = parseFloat(getURLParam("max") ?? localStorage.getItem("max"));
+        cleanValue();
+        val.value = parseFloat(getURLParam("val") ?? localStorage.getItem("val"));
         const p = percent();
         bar.style.width = p + "%";
         pct.textContent = p.toFixed(2) + "%";
